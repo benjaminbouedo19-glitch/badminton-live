@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Badminton Live Scores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #1a73e8;
+    }
+    .terrain {
+      background: white;
+      border-radius: 15px;
+      padding: 15px;
+      margin: 15px auto;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .score {
+      font-size: 2em;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏸 Scores en direct</h1>
+  <div id="terrains"></div>
+
+  <script>
+    async function chargerScores() {
+      try {
+        const res = await fetch('scores.json?cache=' + Date.now());
+        const data = await res.json();
+        const zone = document.getElementById('terrains');
+        zone.innerHTML = '';
+        data.forEach((match, i) => {
+          zone.innerHTML += `
+            <div class="terrain">
+              <h2>Terrain ${i + 1}</h2>
+              <p><strong>${match.joueur1}</strong> vs <strong>${match.joueur2}</strong></p>
+              <p class="score">${match.score1} - ${match.score2}</p>
+              <p>${match.etat}</p>
+            </div>`;
+        });
+      } catch {
+        document.getElementById('terrains').innerHTML = "<p>En attente des scores...</p>";
+      }
+    }
+    chargerScores();
+    setInterval(chargerScores, 3000);
+  </script>
+</body>
+</html>
